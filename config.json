@@ -2,15 +2,15 @@
     "algorithm": "roundRobin",
     "servers": [
         {
-            "id": "server1",
+            "id": "Server:1",
             "url": "http://localhost:5001"
         },
         {
-            "id": "server2",
+            "id": "Server:2",
             "url": "http://localhost:5002"
         },
         {
-            "id": "server3",
+            "id": "Server:3",
             "url": "http://localhost:5003"
         }
     ]
