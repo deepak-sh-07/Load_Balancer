@@ -2,7 +2,7 @@
 
 const metrics = new Map();
 
-export function initializeMetrics(servers) {
+export function initializeMetrics(servers){
     for (const server of servers) {
         metrics.set(server.id, {
             totalRequests: 0,

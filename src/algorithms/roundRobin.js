@@ -1,7 +1,13 @@
+import health from '../health/health.js'
 
-let current = 0;
 export function getNextServer(servers) {
-    const server = servers[0];
-    current = (current + 1) % servers.length;
-    return server;
+
+    for (const server of servers) {
+        const serverHealth = health.get(server.id);
+        if (serverHealth && serverHealth.healthy) {
+            return server;
+        }
+    }
+    return null; // No healthy servers available
+        
 }

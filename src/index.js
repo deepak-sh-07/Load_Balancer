@@ -4,22 +4,26 @@ import { getNextServer } from './algorithms/roundRobin.js'
 import { rateLimiter } from './rate_limiter/rateLimiter.js'
 import { Logger } from './middleware/logger.js'
 import metrics, { initializeMetrics } from "./metrics/metrics.js";
+import health, { initializeHealth } from "./health/health.js"
+import { healthChecker } from './health/healthChecker.js'
 const app = express()
 const PORT = 3000
 import config from "../config.json" with { type: "json" };
 const servers = config.servers;
 initializeMetrics(servers) // initialized a map 
-// console.log(servers)
+
 app.use(express.json())
 
-app.use(Logger)
-app.use(rateLimiter)
+initializeHealth(servers)
+healthChecker(servers);
+
 const proxy = createProxyMiddleware({
     router: (req) => req.backend.url,
     changeOrigin: true,
 });
 
-
+app.use(Logger)
+app.use(rateLimiter)
 
 app.use((req, res, next) => {
     console.log("Setting Backend")
@@ -29,7 +33,6 @@ app.use((req, res, next) => {
         return res.status(503).json({ error: "No backend available" });
     }
     const data = metrics.get(req.backend.id);
-    // console.log(data);
     data.totalRequests++;
     next();
 });
