@@ -1,17 +1,19 @@
 import health from "./health.js";
 async function heathcheck(servers) {
-    for (const server of servers){
+    await Promise.all( // i used promise here beacuse if used loop and await it will then delay the res but now all the req are sent instantly and got the result faster 
+    servers.map(async (server) => {
         const status = health.get(server.id);
-    try {
-        const response = await fetch(`${server.url}/health`);
-        status.healthy = response.ok;
-        status.lastChecked = Date.now();
-    } catch {
-        status.healthy = false;
-        status.lastChecked = Date.now();
+        try {
+            const response = await fetch(`${server.url}/health`);
+            status.healthy = response.ok;
+            status.lastChecked = Date.now();
+        } catch {
+            status.healthy = false;
+            status.lastChecked = Date.now();
         }
-        console.log(`Health check for server ${server.id}: ${status.healthy ? "healthy" : "unhealthy"} \n`);
-}
+    })
+);
+
 }
 export async function healthChecker(servers) {
     await heathcheck(servers); // one health check at the start of the server

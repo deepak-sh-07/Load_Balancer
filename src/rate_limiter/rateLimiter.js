@@ -1,5 +1,4 @@
 import Redis from 'ioredis' // in memory data store so not just for caching
-
 const redis = new Redis();
 
 export const rateLimiter = async (req, res, next) => {
@@ -12,10 +11,6 @@ export const rateLimiter = async (req, res, next) => {
     if (curr === 1) await redis.expire(key, window)
     const ttl = await redis.ttl(key);
 
-    // console.log({
-    //     curr,
-    //     ttl
-    // });
 
     if (curr > limit) {
         return res.status(429).json({ error: 'Too many requests' })
